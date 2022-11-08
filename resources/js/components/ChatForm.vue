@@ -1,8 +1,8 @@
 <template>
     <div class="input-group">
-        <input id="btn-input" type="text" name="message" class="form-control input-sm" placeholder="Type your message here..." v-model="newMessage" @keyup.enter="sendMessage"><br>
+        <input id="btn-input" type="text" name="message" class="form-control input-sm" placeholder="Type your message here..." v-model="newMessage" @keyup.enter="sendMessage"><br><br>
+        <input type="file" class="form-control input-sm" id="files" name="files" @change="onFilesUpload" multiple><br>
         <span class="input-group-btn">
-            <input type="file" id="files" name="files" @change="onFilesUpload" multiple>
             <button class="btn btn-primary btn-sm" id="btn-chat" @click="sendMessage">
                 Send
             </button>
