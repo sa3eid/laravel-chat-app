@@ -21,7 +21,7 @@ return new class extends Migration
             ->on('users')
             ->onUpdate('cascade')
             ->onDelete('cascade');
-            
+
             $table->text('message');
             $table->timestamps();
         });

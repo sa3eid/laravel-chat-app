@@ -13,7 +13,7 @@ class ChatsController extends Controller
     {
       $this->middleware('auth');
     }
-    
+
     /**
      * Show chats
      *
@@ -23,7 +23,7 @@ class ChatsController extends Controller
     {
       return view('chat');
     }
-    
+
     /**
      * Fetch all messages
      *
@@ -33,7 +33,7 @@ class ChatsController extends Controller
     {
       return ModelsMessage::with('user')->get();
     }
-    
+
     /**
      * Persist message to database
      *
@@ -42,16 +42,28 @@ class ChatsController extends Controller
      */
     public function sendMessage(Request $request)
     {
-      $user = Auth::user();
+        $user = Auth::user();
 
-      $message = new \App\Models\Message();
-      $message->user_id = $user->id;
-      $message->message = $request->message;
-      $message->save();
+        $message = new \App\Models\Message();
+        $message->user_id = $user->id;
+        $message->message = $request->message;
 
-    //   broadcast(new MessageSent($user, $message))->toOthers();
-      broadcast(new MessageSent($user, $message));
-    
-      return ['status' => 'Message Sent!'];
+        $files_arr=[];
+
+        if($request->has('files')){
+            foreach($request->file('files') as $file){
+                array_push($files_arr, uploadfile($file, 'files'));
+            }
+            $message->files = implode(",", $files_arr);
+        }else{
+            $message->files = null;
+        }
+
+        $message->save();
+
+        //   broadcast(new MessageSent($user, $message))->toOthers();
+        broadcast(new MessageSent($user, $message));
+
+        return ['status' => 'Message Sent!'];
     }
 }

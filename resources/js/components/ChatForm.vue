@@ -1,8 +1,8 @@
 <template>
     <div class="input-group">
-        <input id="btn-input" type="text" name="message" class="form-control input-sm" placeholder="Type your message here..." v-model="newMessage" @keyup.enter="sendMessage">
-
+        <input id="btn-input" type="text" name="message" class="form-control input-sm" placeholder="Type your message here..." v-model="newMessage" @keyup.enter="sendMessage"><br>
         <span class="input-group-btn">
+            <input type="file" id="files" name="files" @change="onFilesUpload" multiple>
             <button class="btn btn-primary btn-sm" id="btn-chat" @click="sendMessage">
                 Send
             </button>
@@ -16,20 +16,46 @@
 
         data() {
             return {
-                newMessage: ''
+                newMessage: '',
+                files: []
             }
         },
 
         methods: {
             sendMessage() {
-                axios.post('/message/send', {
-                    'message': this.newMessage
-                }).then(response => {
+
+                if(this.newMessage == ''){
+                    alert('insert a message before submit!')
+                }
+
+                let requestBody = new FormData();
+                requestBody.append('message', this.newMessage)
+
+                if(this.files.length != 0 ){
+                    for( var i = 0; i < this.files.length; i++ ){
+                        let file = this.files[i];
+                        // console.log(file);
+                        requestBody.append('files[' + i + ']', file);
+                    }
+                }
+
+                axios.post('/message/send', requestBody).then(response => {
                     console.log(response.data);
                 })
 
                 this.newMessage = ''
+                this.files = []
+            },
+            onFilesUpload(event) {
+                this.files = event.target.files
             }
-        }    
+        }
     }
 </script>
+
+<style scoped>
+    #files{
+        padding: .5em;
+        margin: .1em;
+    }
+</style>

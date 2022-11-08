@@ -10,6 +10,13 @@
                 <p v-if="message">
                     {{ message.message }}
                 </p>
+                <div v-if="message.files">
+                    <ul v-for="file in message.files.split(',')" :key="file" >
+                        <li>
+                            <img :src=file alt="message-attchement" width="100">
+                        </li>
+                    </ul>
+                </div>
             </div>
         </li>
     </ul>
@@ -34,6 +41,7 @@
         .listen('.MessageSent', (e) => {
             this.messages.push({
                 message: e.message.message,
+                files: e.message.files,
                 user: e.user
             });
 
